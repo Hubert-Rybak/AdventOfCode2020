@@ -1,20 +1,47 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-// 2020 = x + y
-// y = x * y
+const int expectedSum = 2020;
 
-var expectedSum = 2020;
+var entries = File.ReadLines("input.txt").Select(int.Parse).ToHashSet();
 
-var entries = File.ReadAllLines("input.txt").Select(int.Parse).ToHashSet();
+PartOne(entries);
+PartTwo(entries);
 
-foreach (var foundX in entries)
+// 2020 = x + z
+// y = x * z
+void PartOne(HashSet<int> entriesMap)
 {
-    var y = expectedSum - foundX;
-    if (entries.TryGetValue(y, out var foundY))
+    foreach (var expectedX in entriesMap)
     {
-        Console.WriteLine($"Result: {foundX * foundY}");
-        return;
+        var y = expectedSum - expectedX;
+        if (entriesMap.TryGetValue(y, out var foundY))
+        {
+            Console.WriteLine($"Part 1 result: {expectedX * foundY}");
+            return;
+        }
+    }
+}
+
+// 2020 = x + z + q
+// y = x * z * q
+void PartTwo(HashSet<int> entriesMap)
+{
+    foreach (var expectedX in entriesMap)
+    {
+        var expectedZAndQ = expectedSum - expectedX;
+        foreach (var expectedZ in entriesMap)
+        {
+            var expectedQ = expectedZAndQ - expectedZ;
+            if (!entries.Contains(expectedQ))
+            {
+                continue;
+            }
+
+            Console.WriteLine($"Part 2 result: {expectedX * expectedZ * expectedQ}");
+            return;
+        }
     }
 }
